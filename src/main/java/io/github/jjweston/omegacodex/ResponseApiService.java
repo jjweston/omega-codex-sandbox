@@ -57,7 +57,7 @@ public class ResponseApiService
 
         this.taskName              = "Response API Call";
         this.apiEndpoint           = "https://api.openai.com/v1/responses";
-        this.model                 = "gpt-5.2";
+        this.model                 = "gpt-5.4";
         this.debug                 = false;
         this.embeddingCacheService = embeddingCacheService;
         this.embeddingService      = embeddingService;
