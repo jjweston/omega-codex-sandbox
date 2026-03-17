@@ -150,6 +150,7 @@ public class ResponseApiService
         this.messages.add( new Message( "user", messageString ));
 
         Map< String, String > reasoningMap = new HashMap<>();
+        reasoningMap.put( "effort", "medium" );
         reasoningMap.put( "summary", "auto" );
 
         Map< String, Object > requestMap = new HashMap<>();
