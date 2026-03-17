@@ -151,7 +151,7 @@ public class ResponseApiService
 
         Map< String, String > reasoningMap = new HashMap<>();
         reasoningMap.put( "effort", "medium" );
-        reasoningMap.put( "summary", "auto" );
+        reasoningMap.put( "summary", "detailed" );
 
         Map< String, Object > requestMap = new HashMap<>();
         requestMap.put( "model", this.model );
