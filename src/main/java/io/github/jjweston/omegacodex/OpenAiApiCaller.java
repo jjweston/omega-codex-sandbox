@@ -1,6 +1,6 @@
 /*
 
-Copyright 2025 Jeffrey J. Weston <jjweston@gmail.com>
+Copyright 2025-2026 Jeffrey J. Weston <jjweston@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -76,9 +76,17 @@ public class OpenAiApiCaller
 
         if ( debug )
         {
+            String debugRequestString;
+            try { debugRequestString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString( requestMap ); }
+            catch ( JsonProcessingException e )
+            {
+                throw new OmegaCodexException( String.format(
+                        "%s, Failed to serialize request for debugging:%n%s", taskName, requestMap ), e );
+            }
+
             omegaCodexUtil.println( "----------------------------------------------------------------------" );
             omegaCodexUtil.println( "Request:" );
-            omegaCodexUtil.println( requestString );
+            omegaCodexUtil.println( debugRequestString );
             omegaCodexUtil.println( "----------------------------------------------------------------------" );
         }
 
