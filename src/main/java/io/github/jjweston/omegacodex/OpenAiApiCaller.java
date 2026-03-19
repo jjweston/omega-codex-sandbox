@@ -18,9 +18,9 @@ limitations under the License.
 
 package io.github.jjweston.omegacodex;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -66,23 +66,11 @@ public class OpenAiApiCaller
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        String requestString;
-        try { requestString = objectMapper.writeValueAsString( requestMap ); }
-        catch ( JsonProcessingException e )
-        {
-            throw new OmegaCodexException(
-                    String.format( "%s, Failed to serialize request:%n%s", taskName, requestMap ), e );
-        }
+        String requestString = objectMapper.writeValueAsString( requestMap );
 
         if ( debug )
         {
-            String debugRequestString;
-            try { debugRequestString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString( requestMap ); }
-            catch ( JsonProcessingException e )
-            {
-                throw new OmegaCodexException( String.format(
-                        "%s, Failed to serialize request for debugging:%n%s", taskName, requestMap ), e );
-            }
+            String debugRequestString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString( requestMap );
 
             omegaCodexUtil.println( "----------------------------------------------------------------------" );
             omegaCodexUtil.println( "Request:" );
@@ -114,7 +102,7 @@ public class OpenAiApiCaller
 
         JsonNode responseNode;
         try { responseNode = objectMapper.readTree( responseString ); }
-        catch ( JsonProcessingException e )
+        catch ( JacksonException e )
         {
             throw new OmegaCodexException(
                     String.format( "%s, Failed to deserialize response. Status Code: %d, Response:%n%s",
@@ -123,7 +111,7 @@ public class OpenAiApiCaller
 
         if ( statusCode != 200 )
         {
-            String errorMessage = responseNode.path( "error" ).path( "message" ).asText();
+            String errorMessage = responseNode.path( "error" ).path( "message" ).asString();
             String exceptionMessage = taskName + ", Error Returned, Status Code: " + statusCode;
             if ( !errorMessage.isEmpty() ) exceptionMessage += ", Error Message: " + errorMessage;
             throw new OmegaCodexException( exceptionMessage );

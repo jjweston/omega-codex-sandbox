@@ -1,6 +1,6 @@
 /*
 
-Copyright 2025 Jeffrey J. Weston <jjweston@gmail.com>
+Copyright 2025-2026 Jeffrey J. Weston <jjweston@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -162,6 +162,34 @@ class MarkdownSplitterTest
         this.mockProcess( 0, null, null, "[]", null );
         List< String > actualChunks = this.markdownSplitter.split( this.mockPath );
         assertThat( actualChunks ).as( "Chunks" ).isEqualTo( expectedChunks );
+    }
+
+    @Test
+    void testSplit_invalidResponse() throws Exception
+    {
+        String stdout =
+                """
+                This is not valid JSON.
+                """;
+
+        List< String > expectedChunks = List.of(
+                """
+                # Test Markdown
+
+                This is a test Markdown file.
+                """ );
+
+        this.mockProcess( 0, null, null, stdout, null );
+
+        OmegaCodexException exception = assertThrowsExactly( OmegaCodexException.class,
+                () -> this.markdownSplitter.split( this.mockPath ));
+
+        String expectedMessage =
+                "Failed to deserialize response:" +
+                System.lineSeparator() +
+                "This is not valid JSON.";
+
+        assertEquals( expectedMessage, exception.getMessage() );
     }
 
     @Test

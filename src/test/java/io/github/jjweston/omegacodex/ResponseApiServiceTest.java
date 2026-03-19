@@ -18,17 +18,17 @@ limitations under the License.
 
 package io.github.jjweston.omegacodex;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -114,7 +114,7 @@ public class ResponseApiServiceTest
 
     @Test
     @SuppressWarnings( "ExtractMethodRecommender" )
-    void getResponse_success() throws Exception
+    void getResponse_success()
     {
         ResponseApiService responseApiService = this.getResponseApiService();
 
@@ -170,13 +170,13 @@ public class ResponseApiServiceTest
 
         Map< String, Object > requestMap = this.requestMapCaptor.getValue();
         @SuppressWarnings( "unchecked" ) List< ObjectNode > input = (List< ObjectNode >) requestMap.get( "input" );
-        String userMessage = input.get( 1 ).get( "content" ).asText();
+        String userMessage = input.get( 1 ).get( "content" ).asString();
         assertTrue( userMessage.contains( searchResultInput ), "Context not found." );
         assertTrue( userMessage.contains( queryString ), "Query not found." );
     }
 
     @Test
-    void getResponseMessage_noMessage() throws Exception
+    void getResponseMessage_noMessage()
     {
         ResponseApiService responseApiService = this.getResponseApiService();
 
@@ -221,7 +221,7 @@ public class ResponseApiServiceTest
 
     @Test
     @SuppressWarnings( "ExtractMethodRecommender" )
-    void getResponseMessage_multipleMessages() throws Exception
+    void getResponseMessage_multipleMessages()
     {
         ResponseApiService responseApiService = this.getResponseApiService();
 
@@ -286,7 +286,7 @@ public class ResponseApiServiceTest
 
     @Test
     @SuppressWarnings( "ExtractMethodRecommender" )
-    void getResponseMessage_multipleContentElements() throws Exception
+    void getResponseMessage_multipleContentElements()
     {
         ResponseApiService responseApiService = this.getResponseApiService();
 

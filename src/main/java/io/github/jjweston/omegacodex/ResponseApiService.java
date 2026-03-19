@@ -18,10 +18,9 @@ limitations under the License.
 
 package io.github.jjweston.omegacodex;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -128,26 +127,12 @@ public class ResponseApiService
             contextList.add( chunk );
         }
 
-        String contextString;
-        try { contextString = this.objectMapper.writeValueAsString( contextList ); }
-        catch ( JsonProcessingException e )
-        {
-            throw new OmegaCodexException(
-                    String.format( "%s, Failed to serialize context:%n%s", this.taskName, contextList ), e );
-        }
-
+        String contextString = this.objectMapper.writeValueAsString( contextList );
         Map< String, String > messageMap = new HashMap<>();
         messageMap.put( "query", query );
         messageMap.put( "context", contextString );
 
-        String messageString;
-        try { messageString = this.objectMapper.writeValueAsString( messageMap ); }
-        catch ( JsonProcessingException e )
-        {
-            throw new OmegaCodexException(
-                    String.format( "%s, Failed to serialize message:%n%s", this.taskName, messageMap ), e );
-        }
-
+        String messageString = this.objectMapper.writeValueAsString( messageMap );
         this.messages.add( this.getObjectNodeFromMessage( "user", messageString ));
 
         Map< String, String > reasoningMap = new HashMap<>();
@@ -193,8 +178,8 @@ public class ResponseApiService
 
         for ( JsonNode messageNode : outputNode )
         {
-            if ( !messageNode.path( "type" ).asText().equals( "message" )) continue;
-            if ( !messageNode.path( "role" ).asText().equals( "assistant" )) continue;
+            if ( !messageNode.path( "type" ).asString().equals( "message" )) continue;
+            if ( !messageNode.path( "role" ).asString().equals( "assistant" )) continue;
 
             if ( responseMessage != null )
             {
@@ -211,7 +196,7 @@ public class ResponseApiService
                         contentNode.size(), outputNode.toPrettyString() ));
             }
 
-            responseMessage = contentNode.get( 0 ).path( "text" ).asText();
+            responseMessage = contentNode.get( 0 ).path( "text" ).asString();
         }
 
         if ( responseMessage == null )
