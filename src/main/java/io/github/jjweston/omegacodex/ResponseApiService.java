@@ -21,6 +21,7 @@ package io.github.jjweston.omegacodex;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,12 +34,13 @@ public class ResponseApiService
     private final String                apiEndpoint;
     private final String                model;
     private final boolean               debug;
+    private final ObjectMapper          objectMapper;
     private final EmbeddingCacheService embeddingCacheService;
     private final EmbeddingService      embeddingService;
     private final QdrantService         qdrantService;
     private final OpenAiApiCaller       openAiApiCaller;
     private final OmegaCodexUtil        omegaCodexUtil;
-    private final List< Message >       messages;
+    private final List< JsonNode >      messages;
 
     ResponseApiService( EmbeddingCacheService embeddingCacheService, EmbeddingService embeddingService,
                         QdrantService qdrantService, OpenAiApiCaller openAiApiCaller )
@@ -59,6 +61,7 @@ public class ResponseApiService
         this.apiEndpoint           = "https://api.openai.com/v1/responses";
         this.model                 = "gpt-5.4";
         this.debug                 = false;
+        this.objectMapper          = new ObjectMapper();
         this.embeddingCacheService = embeddingCacheService;
         this.embeddingService      = embeddingService;
         this.qdrantService         = qdrantService;
@@ -106,14 +109,12 @@ public class ResponseApiService
                 """;
 
         this.messages = new LinkedList<>();
-        this.messages.add( new Message( "developer", developerMessage ));
+        this.messages.add( this.getObjectNodeFromMessage( "developer", developerMessage ));
     }
 
     String getResponse( String query )
     {
         if ( query == null ) throw new IllegalArgumentException( "Query must not be null." );
-
-        ObjectMapper objectMapper = new ObjectMapper();
 
         Embedding queryEmbedding = embeddingService.getEmbedding( query );
         List< SearchResult > searchResults = qdrantService.search( queryEmbedding.vector() );
@@ -128,7 +129,7 @@ public class ResponseApiService
         }
 
         String contextString;
-        try { contextString = objectMapper.writeValueAsString( contextList ); }
+        try { contextString = this.objectMapper.writeValueAsString( contextList ); }
         catch ( JsonProcessingException e )
         {
             throw new OmegaCodexException(
@@ -140,23 +141,27 @@ public class ResponseApiService
         messageMap.put( "context", contextString );
 
         String messageString;
-        try { messageString = objectMapper.writeValueAsString( messageMap ); }
+        try { messageString = this.objectMapper.writeValueAsString( messageMap ); }
         catch ( JsonProcessingException e )
         {
             throw new OmegaCodexException(
                     String.format( "%s, Failed to serialize message:%n%s", this.taskName, messageMap ), e );
         }
 
-        this.messages.add( new Message( "user", messageString ));
+        this.messages.add( this.getObjectNodeFromMessage( "user", messageString ));
 
         Map< String, String > reasoningMap = new HashMap<>();
         reasoningMap.put( "effort", "medium" );
         reasoningMap.put( "summary", "detailed" );
 
+        List< String > includeList = new LinkedList<>();
+        includeList.add( "reasoning.encrypted_content" );
+
         Map< String, Object > requestMap = new HashMap<>();
         requestMap.put( "model", this.model );
         requestMap.put( "input", this.messages );
         requestMap.put( "reasoning", reasoningMap );
+        requestMap.put( "include", includeList );
 
         JsonNode responseNode =
                 this.openAiApiCaller.getResponse( this.taskName, this.apiEndpoint, requestMap, null, this.debug );
@@ -170,9 +175,16 @@ public class ResponseApiService
                 this.taskName, inputTokens, outputTokens, totalTokens ));
 
         JsonNode outputNode = responseNode.path( "output" );
-        String responseMessage = this.getResponseMessage( outputNode );
-        this.messages.add( new Message( "assistant", responseMessage ));
-        return responseMessage;
+        for ( JsonNode messageNode : outputNode ) this.messages.add( messageNode );
+        return this.getResponseMessage( outputNode );
+    }
+
+    private ObjectNode getObjectNodeFromMessage( String role, String message )
+    {
+        ObjectNode node = this.objectMapper.createObjectNode();
+        node.put( "role", role );
+        node.put( "content", message );
+        return node;
     }
 
     private String getResponseMessage( JsonNode outputNode )
