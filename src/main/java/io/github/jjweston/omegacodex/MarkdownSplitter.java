@@ -1,6 +1,6 @@
 /*
 
-Copyright 2025 Jeffrey J. Weston <jjweston@gmail.com>
+Copyright 2025-2026 Jeffrey J. Weston <jjweston@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ limitations under the License.
 
 package io.github.jjweston.omegacodex;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -127,7 +127,7 @@ class MarkdownSplitter
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode responseNode;
         try { responseNode = objectMapper.readTree( responseString ); }
-        catch ( JsonProcessingException e )
+        catch ( JacksonException e )
         {
             throw new OmegaCodexException( String.format( "Failed to deserialize response:%n%s", responseString ), e );
         }
@@ -138,10 +138,10 @@ class MarkdownSplitter
 
         for ( JsonNode element : responseNode )
         {
-            String currentChunk = element.path( "content" ).asText();
+            String currentChunk = element.path( "content" ).asString();
             Map< String, String > currentMetadata = element.path( "metadata" ).propertyStream()
                     .filter( property -> !property.getKey().equals( "Code" ))
-                    .collect( Collectors.toMap( Map.Entry::getKey, property -> property.getValue().asText() ));
+                    .collect( Collectors.toMap( Map.Entry::getKey, property -> property.getValue().asString() ));
 
             if ( currentMetadata.equals( previousMetadata ))
             {

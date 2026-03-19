@@ -1,6 +1,6 @@
 /*
 
-Copyright 2025 Jeffrey J. Weston <jjweston@gmail.com>
+Copyright 2025-2026 Jeffrey J. Weston <jjweston@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ limitations under the License.
 
 package io.github.jjweston.omegacodex;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
 
@@ -39,11 +38,7 @@ class ImmutableDoubleArray
         if ( string == null ) throw new IllegalArgumentException( "String must not be null." );
 
         ObjectMapper objectMapper = new ObjectMapper();
-        try { this.array = objectMapper.readValue( string, double[].class ); }
-        catch ( JsonProcessingException e )
-        {
-            throw new OmegaCodexException( "Failed to deserialize array: " + string, e );
-        }
+        this.array = objectMapper.readValue( string, double[].class );
     }
 
     public boolean equals( Object obj )
@@ -65,12 +60,7 @@ class ImmutableDoubleArray
     public String toString()
     {
         ObjectMapper objectMapper = new ObjectMapper();
-
-        try { return objectMapper.writeValueAsString( this.array ); }
-        catch ( JsonProcessingException e )
-        {
-            throw new OmegaCodexException( "Failed to serialize array: " + Arrays.toString( this.array ), e );
-        }
+        return objectMapper.writeValueAsString( this.array );
     }
 
     float[] toFloatArray()
