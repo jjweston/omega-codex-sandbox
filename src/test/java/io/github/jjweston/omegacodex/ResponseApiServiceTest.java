@@ -1,6 +1,6 @@
 /*
 
-Copyright 2025 Jeffrey J. Weston <jjweston@gmail.com>
+Copyright 2025-2026 Jeffrey J. Weston <jjweston@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -168,8 +169,8 @@ public class ResponseApiServiceTest
                 "Response API Call, Input Tokens: 2,000, Output Tokens: 1,000, Total Tokens: 3,000" );
 
         Map< String, Object > requestMap = this.requestMapCaptor.getValue();
-        @SuppressWarnings( "unchecked" ) List< Message > input = (List< Message >) requestMap.get( "input" );
-        String userMessage = input.get( 1 ).content();
+        @SuppressWarnings( "unchecked" ) List< ObjectNode > input = (List< ObjectNode >) requestMap.get( "input" );
+        String userMessage = input.get( 1 ).get( "content" ).asText();
         assertTrue( userMessage.contains( searchResultInput ), "Context not found." );
         assertTrue( userMessage.contains( queryString ), "Query not found." );
     }
