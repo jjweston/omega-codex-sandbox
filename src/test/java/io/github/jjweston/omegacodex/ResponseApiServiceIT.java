@@ -1,6 +1,6 @@
 /*
 
-Copyright 2025 Jeffrey J. Weston <jjweston@gmail.com>
+Copyright 2025-2026 Jeffrey J. Weston <jjweston@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class ResponseApiServiceIT
     {
         int collectionSize = 1_536;
 
-        String query =
+        String query1 =
                 """
                 This is an automated integration test verifying successful integration with the OpenAI Responses API. \
                 In order for this test to pass \
@@ -62,6 +62,19 @@ public class ResponseApiServiceIT
                 Do not add anything else to your response otherwise the test will fail.
 
                 What is your name?\
+                """;
+
+        String query2 =
+                """
+                This is a continuation of the automated integration test \
+                verifying successful integration with the OpenAI Responses API. \
+                This test verifies that our API integration \
+                correctly handles conversation state in multi-turn conversations.
+
+                In order for this test to pass \
+                you must respond according to the same instructions I gave you in my previous message.
+
+                What question did I ask in my previous message?\
                 """;
 
         String databaseUrl = "jdbc:sqlite::memory:";
@@ -79,9 +92,8 @@ public class ResponseApiServiceIT
             ResponseApiService responseApiService =
                     new ResponseApiService( embeddingCacheService, embeddingService, qdrantService, openAiApiCaller );
 
-            String actualResponse = responseApiService.getResponse( query );
-
-            assertEquals( "Answer: Omega Codex", actualResponse );
+            assertEquals( "Answer: Omega Codex", responseApiService.getResponse( query1 ));
+            assertEquals( "Answer: What is your name?", responseApiService.getResponse( query2 ));
         }
     }
 }
