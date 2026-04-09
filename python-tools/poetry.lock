@@ -342,14 +342,14 @@ langchain-core = ">=1.2.13,<2.0.0"
 
 [[package]]
 name = "langsmith"
-version = "0.7.22"
+version = "0.7.28"
 description = "Client library to connect to the LangSmith Observability and Evaluation Platform."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "langsmith-0.7.22-py3-none-any.whl", hash = "sha256:6e9d5148314d74e86748cb9d3898632cad0320c9323d95f70f969e5bc078eee4"},
-    {file = "langsmith-0.7.22.tar.gz", hash = "sha256:35bfe795d648b069958280760564632fd28ebc9921c04f3e209c0db6a6c7dc04"},
+    {file = "langsmith-0.7.28-py3-none-any.whl", hash = "sha256:88770177a7dd9e434e4b81a49f35c44129b77ccf0ffb7372443c3c0c5d4e45af"},
+    {file = "langsmith-0.7.28.tar.gz", hash = "sha256:12233b2cbcf9f09eec7039ee201b46dcc5b5f132e481e99285ec208d7030dc4a"},
 ]
 
 [package.dependencies]
