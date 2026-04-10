@@ -342,14 +342,14 @@ langchain-core = ">=1.2.13,<2.0.0"
 
 [[package]]
 name = "langsmith"
-version = "0.7.28"
+version = "0.7.30"
 description = "Client library to connect to the LangSmith Observability and Evaluation Platform."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "langsmith-0.7.28-py3-none-any.whl", hash = "sha256:88770177a7dd9e434e4b81a49f35c44129b77ccf0ffb7372443c3c0c5d4e45af"},
-    {file = "langsmith-0.7.28.tar.gz", hash = "sha256:12233b2cbcf9f09eec7039ee201b46dcc5b5f132e481e99285ec208d7030dc4a"},
+    {file = "langsmith-0.7.30-py3-none-any.whl", hash = "sha256:43dd9f8d290e4d406606d6cc0bd62f5d1050963f05fe0ab6ffe50acf41f2f55a"},
+    {file = "langsmith-0.7.30.tar.gz", hash = "sha256:d9df7ba5e42f818b63bda78776c8f2fc853388be3ae77b117e5d183a149321a2"},
 ]
 
 [package.dependencies]
@@ -380,6 +380,7 @@ description = "Fast, correct Python JSON library supporting dataclasses, datetim
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
+markers = "platform_python_implementation != \"PyPy\""
 files = [
     {file = "orjson-3.11.8-cp310-cp310-macosx_10_15_x86_64.macosx_11_0_arm64.macosx_10_15_universal2.whl", hash = "sha256:e6693ff90018600c72fd18d3d22fa438be26076cd3c823da5f63f7bab28c11cb"},
     {file = "orjson-3.11.8-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:93de06bc920854552493c81f1f729fab7213b7db4b8195355db5fda02c7d1363"},
