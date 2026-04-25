@@ -7,6 +7,14 @@ answering project-specific questions, and
 contributing meaningfully to the development process,
 all while integrating tightly with version control and issue tracking platforms like GitHub.
 
+## Experimental Sandbox
+
+> [!NOTE]
+> This is an experimental sandbox repository for Omega Codex.
+> You can find the actual repository here:
+>
+> https://github.com/jjweston/omega-codex
+
 ## Early Development
 
 > [!WARNING]
