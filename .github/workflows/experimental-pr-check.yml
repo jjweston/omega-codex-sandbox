@@ -6,6 +6,7 @@ on:
       - opened
       - reopened
       - synchronize
+  pull_request_review:
 
 jobs:
   integration-check:
