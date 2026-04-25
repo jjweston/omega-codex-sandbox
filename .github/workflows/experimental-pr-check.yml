@@ -51,6 +51,8 @@ jobs:
                 }
               }'
           echo .
-          echo "Repository Owner: ${{ github.repository_owner }}"
+          echo "Repository Owner: ${{ github.event.repository.owner.login }}"
+          echo "Repository Name: ${{ github.event.repository.name }}"
+          echo "Pull Request Number: ${{ github.event.pull_request.number }}"
           echo "Pull Request Author: ${{ github.event.pull_request.user.login }}"
           echo "Pull Request Author Association: ${{ github.event.pull_request.author_association }}"
