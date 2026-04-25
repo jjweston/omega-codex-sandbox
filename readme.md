@@ -184,3 +184,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+## Test Counter
+
+This is a counter we can increment for creating test commits: 1
