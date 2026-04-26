@@ -11,7 +11,7 @@ jobs:
     if: github.event.label.name == 'integration-ready'
     runs-on: ubuntu-latest
     permissions:
-      issues: write
+      pull-requests: write
     steps:
       - name: Logging
         env:
