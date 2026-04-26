@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       statuses: write
+      pull-requests: write
     steps:
       - name: Set Commit Status
         env:
@@ -27,3 +28,17 @@ jobs:
             "/repos/${REPO}/statuses/${SHA}" \
             -f state="pending" \
             -f context="integration-check"
+
+      - name: Remove integration-ready Label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.event.repository.owner.login }}
+          REPO: ${{ github.event.repository.name }}
+          NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh api \
+            --method DELETE \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-ready" \
+            || echo "Failed to remove label: integration-ready"
