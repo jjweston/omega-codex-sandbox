@@ -8,7 +8,7 @@ on:
 jobs:
   integration:
     name: Integration
-    if: github.event.label.name == "integration-ready"
+    if: github.event.label.name == 'integration-ready'
     runs-on: ubuntu-latest
     steps:
       - name: Logging
