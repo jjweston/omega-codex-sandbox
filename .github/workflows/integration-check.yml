@@ -40,3 +40,4 @@ jobs:
           echo "Pull Request Author: ${{ github.event.pull_request.user.login }}"
           echo "Pull Request Author Association: ${{ github.event.pull_request.author_association }}"
           echo "Label: ${{ github.event.label.name }}"
+          echo "Test: 1"
