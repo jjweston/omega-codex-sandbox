@@ -1,4 +1,4 @@
-name: Experimental Pull Request Check
+name: Integration Pending
 
 on:
   pull_request:
@@ -8,8 +8,8 @@ on:
       - synchronize
 
 jobs:
-  integration-check:
-    name: Integration Check
+  clear-integration-status:
+    name: Clear Integration Status
     runs-on: ubuntu-latest
     permissions:
       statuses: write
@@ -26,4 +26,4 @@ jobs:
             -H "X-GitHub-Api-Version: 2026-03-10" \
             "/repos/${REPO}/statuses/${SHA}" \
             -f state="pending" \
-            -f context="experimental-pr-check"
+            -f context="integration-check"
