@@ -22,13 +22,12 @@ jobs:
           gh api graphql \
             -f owner="$OWNER" \
             -f repo="$REPO" \
-            -f ref="$REF" \
             -f query='
-              query( $owner: String!, $repo: String!, $ref: String! )
+              query( $owner: String!, $repo: String! )
               {
                 repository( owner: $owner, name: $repo )
                 {
-                  pullRequests( baseRefName: $ref, first: 20 )
+                  pullRequests( first: 20 )
                   {
                     nodes
                     {
