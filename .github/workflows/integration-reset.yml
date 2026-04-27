@@ -2,8 +2,6 @@ name: Integration Reset
 
 on:
   push:
-    branches:
-      - 'main'
 
 jobs:
   reset-integration-status:
