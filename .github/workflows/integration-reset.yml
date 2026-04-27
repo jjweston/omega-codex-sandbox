@@ -38,6 +38,7 @@ jobs:
                       {
                         state
                       }
+                      baseRefName
                       headRefName
                       headRefOid
                     }
