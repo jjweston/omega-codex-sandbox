@@ -20,27 +20,31 @@ jobs:
           REPO: ${{ github.event.repository.name }}
           NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          gh api graphql \
-            -f owner="$OWNER" \
-            -f repo="$REPO" \
-            -F number="$NUMBER" \
-            -f query='
-              query( $owner: String!, $repo: String!, $number: Int! )
-              {
-                repository( owner: $owner, name: $repo )
+          REVIEW_DECISION="$(
+            gh api graphql \
+              -f owner="$OWNER" \
+              -f repo="$REPO" \
+              -F number="$NUMBER" \
+              -f query='
+                query( $owner: String!, $repo: String!, $number: Int! )
                 {
-                  pullRequest( number: $number )
+                  repository( owner: $owner, name: $repo )
                   {
-                    reviewDecision
+                    pullRequest( number: $number )
+                    {
+                      reviewDecision
+                    }
                   }
-                }
-              }'
+                }' \
+              -q ".data.repository.pullRequest.reviewDecision"
+            )"
           echo .
           echo "Repository Owner: ${{ github.event.repository.owner.login }}"
           echo "Repository Name: ${{ github.event.repository.name }}"
           echo "Pull Request Number: ${{ github.event.pull_request.number }}"
           echo "Pull Request Author: ${{ github.event.pull_request.user.login }}"
           echo "Pull Request Author Association: ${{ github.event.pull_request.author_association }}"
+          echo "Review Decision: $REVIEW_DECISION"
 
       - name: Remove Integration Labels
         env:
