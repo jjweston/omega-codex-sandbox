@@ -64,5 +64,5 @@ jobs:
             echo "State: $STATE"
             echo "Status Check: $STATUS_CHECK"
             echo "Head Ref Name: $HEAD_REF_NAME"
-            echo "Head Ref OID: $HEAD_REF_OID
+            echo "Head Ref OID: $HEAD_REF_OID"
           done
