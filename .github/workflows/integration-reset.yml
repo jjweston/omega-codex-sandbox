@@ -10,5 +10,38 @@ jobs:
 
     steps:
       - name: Logging
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.event.repository.owner.login }}
+          REPO: ${{ github.event.repository.name }}
+          REF: ${{ github.event.ref }}
         run: |
-          echo "${{ toJSON( github.event ) }}"
+          echo "Owner: $OWNER"
+          echo "Repo: $REPO"
+          echo "Ref: $REF"
+          gh api graphql \
+            -f owner="$OWNER" \
+            -f repo="$REPO" \
+            -f ref="$REF" \
+            -f query='
+              query( $owner: String!, $repo: String!, $ref: String! )
+              {
+                repository( owner: $owner, name: $repo )
+                {
+                  ref( qualifiedName: $ref )
+                  {
+                    associatedPullRequests( first: 20 )
+                    {
+                      nodes
+                      {
+                        number
+                        title
+                        state
+                        statusCheckRollup
+                        headRefName
+                        headRefOid
+                      }
+                    }
+                  }
+                }
+              }'
