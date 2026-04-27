@@ -58,7 +58,7 @@ jobs:
             | @tsv
           ' | while IFS=$'\t' read -r NUMBER TITLE STATE STATUS_CHECK HEAD_REF_NAME HEAD_REF_OID
           do
-            echo .
+            echo
             echo "Number: $NUMBER"
             echo "Title: $TITLE"
             echo "State: $STATE"
