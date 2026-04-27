@@ -14,7 +14,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           OWNER: ${{ github.event.repository.owner.login }}
           REPO: ${{ github.event.repository.name }}
-          REF: ${{ github.event.ref }}
+          REF: ${{ github.ref_name }}
         run: |
           echo "Owner: $OWNER"
           echo "Repo: $REPO"
@@ -22,12 +22,13 @@ jobs:
           gh api graphql \
             -f owner="$OWNER" \
             -f repo="$REPO" \
+            -f ref="$REF" \
             -f query='
-              query( $owner: String!, $repo: String! )
+              query( $owner: String!, $repo: String!, $ref: String! )
               {
                 repository( owner: $owner, name: $repo )
                 {
-                  pullRequests( first: 20 )
+                  pullRequests( baseRefName: $ref, first: 20 )
                   {
                     nodes
                     {
@@ -38,7 +39,6 @@ jobs:
                       {
                         state
                       }
-                      baseRefName
                       headRefName
                       headRefOid
                     }
