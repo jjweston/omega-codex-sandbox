@@ -54,5 +54,4 @@ jobs:
           State: \(.state)
           Status Check: \(.statusCheckRollup.state // "NONE")
           Head Ref Name: \(.headRefName)
-          Head Ref OID: \(.headRefOid)
-          "'
+          Head Ref OID: \(.headRefOid)"'
