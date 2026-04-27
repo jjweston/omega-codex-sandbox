@@ -22,16 +22,29 @@ jobs:
           gh api graphql \
             -f owner="$OWNER" \
             -f repo="$REPO" \
+            -f ref="$REF" \
             -f query='
-              query( $owner: String!, $repo: String! )
+              query( $owner: String!, $repo: String!, $ref: String! )
               {
                 repository( owner: $owner, name: $repo )
                 {
-                  refs( refPrefix: "refs/heads/", first: 10 )
+                  ref( qualifiedName: $ref )
                   {
-                    nodes
+                    name
+                    associatedPullRequests( first: 20 )
                     {
-                      name
+                      nodes
+                      {
+                        number
+                        title
+                        state
+                        statusCheckRollup
+                        {
+                          state
+                        }
+                        headRefName
+                        headRefOid
+                      }
                     }
                   }
                 }
