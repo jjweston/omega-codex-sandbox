@@ -80,7 +80,7 @@ jobs:
           echo "Pull Request Author Association: ${{ github.event.pull_request.author_association }}"
           echo "Review Decision: $REVIEW_DECISION"
 
-          if [[ "$REVIEW_DECISION" == "APPROVED" || "$AUTHOR_ASSOCIATION" == "OWNER" ]]; then
+          if [[ "$REVIEW_DECISION" == "APPROVED" || "${{ github.event.pull_request.author_association }}" == "OWNER" ]]; then
             echo "Approved: true"
             echo "approved=true" >> "$GITHUB_OUTPUT"
           else
