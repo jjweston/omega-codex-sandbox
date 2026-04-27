@@ -19,29 +19,41 @@ jobs:
           echo "Owner: $OWNER"
           echo "Repo: $REPO"
           echo "Ref: $REF"
-          gh api graphql \
-            -f owner="$OWNER" \
-            -f repo="$REPO" \
-            -f ref="$REF" \
-            -f query='
-              query( $owner: String!, $repo: String!, $ref: String! )
-              {
-                repository( owner: $owner, name: $repo )
+          RESPONSE="$(
+            gh api graphql \
+              -f owner="$OWNER" \
+              -f repo="$REPO" \
+              -f ref="$REF" \
+              -f query='
+                query( $owner: String!, $repo: String!, $ref: String! )
                 {
-                  pullRequests( baseRefName: $ref, first: 20 )
+                  repository( owner: $owner, name: $repo )
                   {
-                    nodes
+                    pullRequests( baseRefName: $ref, first: 20 )
                     {
-                      number
-                      title
-                      state
-                      statusCheckRollup
+                      nodes
                       {
+                        number
+                        title
                         state
+                        statusCheckRollup
+                        {
+                          state
+                        }
+                        headRefName
+                        headRefOid
                       }
-                      headRefName
-                      headRefOid
                     }
                   }
-                }
-              }'
+                }'
+            )"
+            echo "$RESPONSE" | jq -r '
+              .data.repository.pullRequests.nodes[]
+              | "Number: \(.number)
+                Title: \(.title)
+                State: \(.state)
+                Status Check: \(.statusCheckRollup.state // "NONE")
+                Head Ref Name: \(.headRefName)
+                Head Ref OID: \(.headRefOid)
+              "
+            '
