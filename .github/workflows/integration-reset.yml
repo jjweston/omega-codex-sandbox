@@ -38,6 +38,9 @@ jobs:
                         title
                         state
                         statusCheckRollup
+                        {
+                          state
+                        }
                         headRefName
                         headRefOid
                       }
