@@ -13,39 +13,6 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - name: Logging
-        env:
-          GH_TOKEN: ${{ github.token }}
-          OWNER: ${{ github.event.repository.owner.login }}
-          REPO: ${{ github.event.repository.name }}
-          NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          REVIEW_DECISION="$(
-            gh api graphql \
-              -f owner="$OWNER" \
-              -f repo="$REPO" \
-              -F number="$NUMBER" \
-              -f query='
-                query( $owner: String!, $repo: String!, $number: Int! )
-                {
-                  repository( owner: $owner, name: $repo )
-                  {
-                    pullRequest( number: $number )
-                    {
-                      reviewDecision
-                    }
-                  }
-                }' \
-              -q ".data.repository.pullRequest.reviewDecision"
-            )"
-          echo .
-          echo "Repository Owner: ${{ github.event.repository.owner.login }}"
-          echo "Repository Name: ${{ github.event.repository.name }}"
-          echo "Pull Request Number: ${{ github.event.pull_request.number }}"
-          echo "Pull Request Author: ${{ github.event.pull_request.user.login }}"
-          echo "Pull Request Author Association: ${{ github.event.pull_request.author_association }}"
-          echo "Review Decision: $REVIEW_DECISION"
-
       - name: Remove Integration Labels
         env:
           GH_TOKEN: ${{ github.token }}
@@ -77,3 +44,60 @@ jobs:
             -H "X-GitHub-Api-Version: 2026-03-10" \
             "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-failure" \
             || echo "Failed to remove label: integration-failure"
+
+      - name: Check Approval
+        id: approval
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.event.repository.owner.login }}
+          REPO: ${{ github.event.repository.name }}
+          NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          REVIEW_DECISION="$(
+            gh api graphql \
+              -f owner="$OWNER" \
+              -f repo="$REPO" \
+              -F number="$NUMBER" \
+              -f query='
+                query( $owner: String!, $repo: String!, $number: Int! )
+                {
+                  repository( owner: $owner, name: $repo )
+                  {
+                    pullRequest( number: $number )
+                    {
+                      reviewDecision
+                    }
+                  }
+                }' \
+              -q ".data.repository.pullRequest.reviewDecision"
+            )"
+
+          echo "Repository Owner: ${{ github.event.repository.owner.login }}"
+          echo "Repository Name: ${{ github.event.repository.name }}"
+          echo "Pull Request Number: ${{ github.event.pull_request.number }}"
+          echo "Pull Request Author: ${{ github.event.pull_request.user.login }}"
+          echo "Pull Request Author Association: ${{ github.event.pull_request.author_association }}"
+          echo "Review Decision: $REVIEW_DECISION"
+
+          if [[ "$REVIEW_DECISION" == "APPROVED" || "$AUTHOR_ASSOCIATION" == "OWNER" ]]; then
+            echo "Approved: true"
+            echo "approved=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Approved: false"
+            echo "approved=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Integration Success
+        if: steps.approval.outputs.approved == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "/repos/${REPO}/statuses/${SHA}" \
+            -f state="success" \
+            -f context="integration-check"
