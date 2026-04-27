@@ -27,7 +27,7 @@ jobs:
               {
                 repository( owner: $owner, name: $repo )
                 {
-                  refs( first: 10 )
+                  refs( refPrefix: "refs/heads", first: 10 )
                   {
                     nodes
                     {
