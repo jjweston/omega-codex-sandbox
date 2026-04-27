@@ -45,15 +45,14 @@ jobs:
                       }
                     }
                   }
-                }'
-            )"
-            echo "$RESPONSE" | jq -r '
-              .data.repository.pullRequests.nodes[]
-              | "Number: \(.number)
-                Title: \(.title)
-                State: \(.state)
-                Status Check: \(.statusCheckRollup.state // "NONE")
-                Head Ref Name: \(.headRefName)
-                Head Ref OID: \(.headRefOid)
-              "
-            '
+                }' )"
+          echo "$RESPONSE" | jq -r '
+            .data.repository.pullRequests.nodes[]
+            | "
+          Number: \(.number)
+          Title: \(.title)
+          State: \(.state)
+          Status Check: \(.statusCheckRollup.state // "NONE")
+          Head Ref Name: \(.headRefName)
+          Head Ref OID: \(.headRefOid)
+          "'
