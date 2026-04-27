@@ -1,0 +1,16 @@
+name: Integration Reset
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  reset-integration-status:
+    name: Reset Integration Status
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Logging
+        run: |
+          echo "${{ toJSON( github.event ) }}"
