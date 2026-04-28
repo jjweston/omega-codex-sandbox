@@ -85,7 +85,4 @@ jobs:
             if [[ "$HAS_NEXT_PAGE" != "true" ]]; then
               break
             fi
-
-            echo
-            echo "Page Break"
           done
