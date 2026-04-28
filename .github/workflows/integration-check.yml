@@ -6,9 +6,17 @@ on:
       - labeled
 
 jobs:
+  check-ref-protected:
+    name: Check Ref Protected
+    uses: ./.github/workflows/check-ref-protected.yml
+    with:
+      repo: ${{ github.event.pull_request.base.repo.full_name }}
+      ref: ${{ github.event.pull_request.base.ref }}
+
   integration:
     name: Integration
-    if: github.event.label.name == 'integration-ready'
+    needs: check-ref-protected
+    if: ${{ needs.check-base-ref.outputs.protected == 'true' && github.event.label.name == 'integration-ready' }}
     runs-on: ubuntu-latest
     permissions:
       statuses: write
