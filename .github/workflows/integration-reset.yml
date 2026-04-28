@@ -6,6 +6,7 @@ on:
 jobs:
   reset-integration-status:
     name: Reset Integration Status
+    if: github.ref_protected == true
     runs-on: ubuntu-latest
 
     steps:
