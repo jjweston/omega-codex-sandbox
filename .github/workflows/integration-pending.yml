@@ -15,6 +15,11 @@ jobs:
       statuses: write
       pull-requests: write
     steps:
+      - name: Log Protection Status
+        run: |
+          echo "github.ref: ${{ github.ref }}"
+          echo "github.ref_protected: ${{ github.ref_protected }}"
+
       - name: Set Commit Status
         env:
           GH_TOKEN: ${{ github.token }}

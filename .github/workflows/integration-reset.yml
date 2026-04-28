@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Log Protection Status
+        run: |
+          echo "github.ref: ${{ github.ref }}"
+          echo "github.ref_protected: ${{ github.ref_protected }}"
+
       - name: Logging
         env:
           GH_TOKEN: ${{ github.token }}
