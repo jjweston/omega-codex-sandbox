@@ -17,12 +17,23 @@ jobs:
     steps:
       - name: Log Protect Status
         env:
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          REPO: ${{ github.event.pull_request.base.repo.full_name }}
+          REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          ENCODED_BASE_REF="$(jq -rn --arg v "$BASE_REF" '$v|@uri')"
+          ENCODED_REF="$(jq -rn --arg v "$REF" '$v|@uri')"
 
-          echo "Base Ref: $BASE_REF"
-          echo "Encoded Base Ref: $ENCODED_BASE_REF"
+          PROTECTED="$(
+            gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2026-03-10" \
+              "/repos/${REPO}/branches/${ENCODED_REF}" \
+              --jq ".protected"
+          )"
+
+          echo "Repo: $REPO"
+          echo "Ref: $REF"
+          echo "Encoded Ref: $ENCODED_REF"
+          echo "Protected: $PROTECTED"
 
       - name: Set Commit Status
         env:
