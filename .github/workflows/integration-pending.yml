@@ -15,6 +15,15 @@ jobs:
       statuses: write
       pull-requests: write
     steps:
+      - name: Log Protect Status
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          ENCODED_BASE_REF="$(jq -rn --arg v "$BASE_REF" '$v|@uri')"
+
+          echo "Base Ref: $BASE_REF"
+          echo "Encoded Base Ref: $BASE_REF"
+
       - name: Set Commit Status
         env:
           GH_TOKEN: ${{ github.token }}
