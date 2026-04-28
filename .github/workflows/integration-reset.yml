@@ -70,6 +70,10 @@ jobs:
               | @tsv
             ' | while IFS=$'\t' read -r NUMBER TITLE STATE STATUS_CHECK HEAD_REF_NAME HEAD_REF_OID
             do
+              if [[ "$STATUS_CHECK" != "SUCCESS" && "$STATUS_CHECK" != "NONE" ]]; then
+                continue
+              fi
+
               echo
               echo "Number: $NUMBER"
               echo "Title: $TITLE"
