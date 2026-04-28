@@ -15,7 +15,8 @@ jobs:
       statuses: write
       pull-requests: write
     steps:
-      - name: Log Protect Status
+      - name: Check Base Ref
+        id: check-base-ref
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.event.pull_request.base.repo.full_name }}
@@ -36,7 +37,10 @@ jobs:
           echo "Encoded Ref: $ENCODED_REF"
           echo "Protected: $PROTECTED"
 
+          echo "protected=$PROTECTED" >> "$GITHUB_OUTPUT"
+
       - name: Set Commit Status
+        if: steps.check-base-ref.outputs.protected == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.event.pull_request.head.repo.full_name }}
@@ -51,6 +55,7 @@ jobs:
             -f context="integration-check"
 
       - name: Remove Integration Labels
+        if: steps.check-base-ref.outputs.protected == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           OWNER: ${{ github.event.repository.owner.login }}
