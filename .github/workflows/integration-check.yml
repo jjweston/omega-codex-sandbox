@@ -14,34 +14,6 @@ jobs:
       statuses: write
       pull-requests: write
     steps:
-      - name: Log Ref Details
-        env:
-          GH_TOKEN: ${{ github.token }}
-          OWNER: ${{ github.event.repository.owner.login }}
-          REPO: ${{ github.event.repository.name }}
-          REF: ${{ github.event.pull_request.base.ref }}
-        run: |
-          echo "github.event.pull_request.head.ref: ${{ github.event.pull_request.head.ref }}"
-          echo "github.event.pull_request.base.ref: ${{ github.event.pull_request.base.ref }}"
-          echo
-          echo "github.ref: ${{ github.ref }}"
-          echo "github.ref_protected: ${{ github.ref_protected }}"
-          gh api graphql \
-            -f owner="$OWNER" \
-            -f repo="$REPO" \
-            -f ref="$REF" \
-            -f query='
-              query( $owner: String!, $repo: String!, $ref: String! )
-              {
-                repository( owner: $owner, name: $repo )
-                {
-                  ref( qualifiedName: $ref )
-                  {
-                    branchProtectionRule
-                  }
-                }
-              }'
-
       - name: Remove Integration Labels
         env:
           GH_TOKEN: ${{ github.token }}
