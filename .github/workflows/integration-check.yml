@@ -16,7 +16,7 @@ jobs:
   integration:
     name: Integration
     needs: check-ref-protected
-    if: ${{ needs.check-base-ref.outputs.protected == 'true' && github.event.label.name == 'integration-ready' }}
+    if: ${{ needs.check-ref-protected.outputs.protected == 'true' && github.event.label.name == 'integration-ready' }}
     runs-on: ubuntu-latest
     permissions:
       statuses: write
