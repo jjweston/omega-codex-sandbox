@@ -1,0 +1,45 @@
+name: Check Ref Protected
+
+on:
+  workflow_call:
+    inputs:
+      repo:
+        required: true
+        type: string
+      ref:
+        required: true
+        type: string
+    outputs:
+      protected:
+        value: ${{ jobs.check-ref.outputs.protected }}
+
+jobs:
+  check-ref:
+    name: Check Ref
+    runs-on: ubuntu-latest
+    outputs:
+      protected: ${{ steps.check.outputs.protected }}
+    steps:
+      - name: Check
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ inputs.repo }}
+          REF: ${{ inputs.ref }}
+        run: |
+          ENCODED_REF="$(jq -rn --arg v "$REF" '$v|@uri')"
+
+          PROTECTED="$(
+            gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2026-03-10" \
+              "/repos/${REPO}/branches/${ENCODED_REF}" \
+              --jq ".protected"
+          )"
+
+          echo "Repo: $REPO"
+          echo "Ref: $REF"
+          echo "Encoded Ref: $ENCODED_REF"
+          echo "Protected: $PROTECTED"
+
+          echo "protected=$PROTECTED" >> "$GITHUB_OUTPUT"

@@ -8,39 +8,22 @@ on:
       - synchronize
 
 jobs:
+  check-ref-protected:
+    uses: ./.github/workflows/check-ref-protected.yml
+    with:
+      repo: ${{ github.event.pull_request.base.repo.full_name }}
+      ref: ${{ github.event.pull_request.base.ref }}
+
   clear-integration-status:
     name: Clear Integration Status
+    needs: check-ref-protected
+    if: needs.check-ref-protected.outputs.protected == 'true'
     runs-on: ubuntu-latest
     permissions:
       statuses: write
       pull-requests: write
     steps:
-      - name: Check Base Ref
-        id: check-base-ref
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.event.pull_request.base.repo.full_name }}
-          REF: ${{ github.event.pull_request.base.ref }}
-        run: |
-          ENCODED_REF="$(jq -rn --arg v "$REF" '$v|@uri')"
-
-          PROTECTED="$(
-            gh api \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2026-03-10" \
-              "/repos/${REPO}/branches/${ENCODED_REF}" \
-              --jq ".protected"
-          )"
-
-          echo "Repo: $REPO"
-          echo "Ref: $REF"
-          echo "Encoded Ref: $ENCODED_REF"
-          echo "Protected: $PROTECTED"
-
-          echo "protected=$PROTECTED" >> "$GITHUB_OUTPUT"
-
       - name: Set Commit Status
-        if: steps.check-base-ref.outputs.protected == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.event.pull_request.head.repo.full_name }}
@@ -55,7 +38,6 @@ jobs:
             -f context="integration-check"
 
       - name: Remove Integration Labels
-        if: steps.check-base-ref.outputs.protected == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           OWNER: ${{ github.event.repository.owner.login }}
