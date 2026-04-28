@@ -29,7 +29,7 @@ jobs:
             -f state="pending" \
             -f context="integration-check"
 
-      - name: Remove integration-ready Label
+      - name: Remove Integration Labels
         env:
           GH_TOKEN: ${{ github.token }}
           OWNER: ${{ github.event.repository.owner.login }}
@@ -42,3 +42,21 @@ jobs:
             -H "X-GitHub-Api-Version: 2026-03-10" \
             "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-ready" \
             || echo "Failed to remove label: integration-ready"
+          gh api \
+            --method DELETE \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-running" \
+            || echo "Failed to remove label: integration-running"
+          gh api \
+            --method DELETE \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-success" \
+            || echo "Failed to remove label: integration-success"
+          gh api \
+            --method DELETE \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-failure" \
+            || echo "Failed to remove label: integration-failure"
