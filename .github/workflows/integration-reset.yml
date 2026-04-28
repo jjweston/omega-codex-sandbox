@@ -35,7 +35,7 @@ jobs:
                   {
                     repository( owner: $owner, name: $repo )
                     {
-                      pullRequests( baseRefName: $ref, first: 5, after: $cursor )
+                      pullRequests( baseRefName: $ref, first: 100, after: $cursor )
                       {
                         nodes
                         {
