@@ -12,6 +12,10 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Test Output
+        run: |
+          echo "Test: 1"
+
       - name: Reset Pull Requsts
         env:
           GH_TOKEN: ${{ github.token }}
