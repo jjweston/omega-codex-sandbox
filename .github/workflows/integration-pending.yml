@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Test Output
         run: |
-          echo "Test: 1"
+          echo "Test: 2"
 
       - name: Set Commit Status
         env:
