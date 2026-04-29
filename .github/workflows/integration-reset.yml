@@ -52,6 +52,13 @@ jobs:
                           {
                             state
                           }
+                          headRef
+                          {
+                            repository
+                            {
+                              nameWithOwner
+                            }
+                          }
                           headRefName
                           headRefOid
                         }
@@ -71,10 +78,11 @@ jobs:
                 .title,
                 .state,
                 (.statusCheckRollup.state // "NONE"),
+                .headRef.repository.nameWithOwner,
                 .headRefName,
                 .headRefOid ]
               | @tsv
-            ' | while IFS=$'\t' read -r NUMBER TITLE STATE STATUS_CHECK HEAD_REF_NAME HEAD_REF_OID
+            ' | while IFS=$'\t' read -r NUMBER TITLE STATE STATUS_CHECK HEAD_REPO HEAD_REF_NAME HEAD_REF_OID
             do
               if [[ "$STATUS_CHECK" != "SUCCESS" && "$STATUS_CHECK" != "NONE" ]]; then
                 continue
@@ -85,8 +93,42 @@ jobs:
               echo "Title: $TITLE"
               echo "State: $STATE"
               echo "Status Check: $STATUS_CHECK"
+              echo "Head Repo: $HEAD_REPO"
               echo "Head Ref Name: $HEAD_REF_NAME"
               echo "Head Ref OID: $HEAD_REF_OID"
+
+              gh api \
+                --method POST \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2026-03-10" \
+                "/repos/${HEAD_REPO}/statuses/${HEAD_REF_OID}" \
+                -f state="pending" \
+                -f context="integration-check"
+
+              gh api \
+                --method DELETE \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2026-03-10" \
+                "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-ready" \
+                || echo "Failed to remove label: integration-ready"
+              gh api \
+                --method DELETE \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2026-03-10" \
+                "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-running" \
+                || echo "Failed to remove label: integration-running"
+              gh api \
+                --method DELETE \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2026-03-10" \
+                "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-success" \
+                || echo "Failed to remove label: integration-success"
+              gh api \
+                --method DELETE \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2026-03-10" \
+                "/repos/${OWNER}/${REPO}/issues/${NUMBER}/labels/integration-failure" \
+                || echo "Failed to remove label: integration-failure"
             done
 
             HAS_NEXT_PAGE="$(echo "$RESPONSE" | jq -r '.data.repository.pullRequests.pageInfo.hasNextPage')"
