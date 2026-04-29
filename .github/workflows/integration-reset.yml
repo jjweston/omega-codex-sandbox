@@ -13,11 +13,6 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Log Protection Status
-        run: |
-          echo "github.ref: ${{ github.ref }}"
-          echo "github.ref_protected: ${{ github.ref_protected }}"
-
       - name: Reset Pull Requsts
         env:
           GH_TOKEN: ${{ github.token }}
