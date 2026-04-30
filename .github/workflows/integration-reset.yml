@@ -6,11 +6,11 @@ on:
 jobs:
   reset-integration-status:
     name: Reset Integration Status
-    if: github.ref_protected == true
-    runs-on: ubuntu-latest
     permissions:
       statuses: write
       pull-requests: write
+    if: github.ref_protected == true
+    runs-on: ubuntu-latest
 
     steps:
       - name: Reset Pull Requsts

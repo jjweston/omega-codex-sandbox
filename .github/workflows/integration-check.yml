@@ -17,12 +17,12 @@ jobs:
 
   integration:
     name: Integration
-    needs: check-ref-protected
-    if: needs.check-ref-protected.outputs.protected == 'true'
-    runs-on: ubuntu-latest
     permissions:
       statuses: write
       pull-requests: write
+    needs: check-ref-protected
+    if: needs.check-ref-protected.outputs.protected == 'true'
+    runs-on: ubuntu-latest
     steps:
       - name: Remove Integration Labels
         env:
