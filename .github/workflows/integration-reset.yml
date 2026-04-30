@@ -12,6 +12,11 @@ jobs:
     if: github.ref_protected == true
     runs-on: ubuntu-latest
     steps:
+      - name: Logging
+        run: |
+          echo "Action Actor: ${{ github.actor }}"
+          echo "Action Triggering Actor: ${{ github.triggering_actor }}"
+
       - name: Reset Pull Requsts
         env:
           GH_TOKEN: ${{ github.token }}

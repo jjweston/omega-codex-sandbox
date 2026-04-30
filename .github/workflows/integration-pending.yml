@@ -25,6 +25,12 @@ jobs:
     if: needs.check-ref-protected.outputs.protected == 'true'
     runs-on: ubuntu-latest
     steps:
+      - name: Logging
+        run: |
+          echo "Action Actor: ${{ github.actor }}"
+          echo "Action Triggering Actor: ${{ github.triggering_actor }}"
+          echo "Pull Request Author: ${{ github.event.pull_request.user.login }}"
+
       - name: Test Output
         run: |
           echo "Test: 1"

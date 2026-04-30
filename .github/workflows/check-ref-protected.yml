@@ -21,6 +21,11 @@ jobs:
     outputs:
       protected: ${{ steps.check.outputs.protected }}
     steps:
+      - name: Logging
+        run: |
+          echo "Action Actor: ${{ github.actor }}"
+          echo "Action Triggering Actor: ${{ github.triggering_actor }}"
+
       - name: Check
         id: check
         env:
