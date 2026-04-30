@@ -11,7 +11,6 @@ jobs:
       pull-requests: write
     if: github.ref_protected == true
     runs-on: ubuntu-latest
-
     steps:
       - name: Reset Pull Requsts
         env:
