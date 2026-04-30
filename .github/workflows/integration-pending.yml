@@ -27,8 +27,8 @@ jobs:
     steps:
       - name: Logging
         run: |
-          echo "Action Actor: ${{ github.actor }}"
-          echo "Action Triggering Actor: ${{ github.triggering_actor }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Triggering Actor: ${{ github.triggering_actor }}"
           echo "Pull Request Author: ${{ github.event.pull_request.user.login }}"
 
       - name: Test Output
