@@ -85,7 +85,7 @@ limitations under the License.
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.53.1.0</version>
+            <version>3.53.2.1</version>
         </dependency>
 
         <!-- serialization -->
